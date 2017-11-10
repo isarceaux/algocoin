@@ -1,0 +1,2 @@
+class Trio < ApplicationRecord
+end

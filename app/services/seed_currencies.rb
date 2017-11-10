@@ -6,7 +6,7 @@ class SeedCurrencies
   end
 
   def perform
-    currencies = HTTParty.get( url_build('returnCurrencies') ).parsed_response
+    currencies = HTTParty.get(url_build('returnCurrencies')).parsed_response
     currencies.each do |c|
       cnew = Currency.new
       cnew.code = c[0]
@@ -15,7 +15,7 @@ class SeedCurrencies
     end
   end
 
-  def url_build( command )
+  def url_build(command)
     return URL_FIX_ZERO + command
   end
 

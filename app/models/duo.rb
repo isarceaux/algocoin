@@ -1,0 +1,2 @@
+class Duo < ApplicationRecord
+end

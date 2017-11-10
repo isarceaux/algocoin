@@ -10,11 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171107165723) do
+ActiveRecord::Schema.define(version: 20171110112326) do
 
   create_table "currencies", force: :cascade do |t|
     t.string "code"
     t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "duos", force: :cascade do |t|
+    t.string "currency1_code"
+    t.string "currency2_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trios", force: :cascade do |t|
+    t.string "currency1_code"
+    t.string "currency2_code"
+    t.string "currency3_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
