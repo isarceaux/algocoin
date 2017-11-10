@@ -14,3 +14,18 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.background-grey
+{
+  background-color: lightgrey;
+}
+
+th, td
+{
+  padding: 5px;
+}
+
+th
+{
+  text-align: center;
+}

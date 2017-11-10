@@ -1,0 +1,31 @@
+<div class="container">
+  <h1>List of pairs</h1>
+  <p>Voici la liste de toutes les paires disponibles sur Poloniex</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th colspan="2">Currency 1</th>
+        <th colspan="2">Currency 2</th>
+      </tr>
+      <tr>
+        <th>ID</th>
+        <th class="background-grey">Code</th>
+        <th>Nom</th>
+        <th class="background-grey">Code</th>
+        <th>Nom</th>
+    </thead>
+    <% n = 1 %>
+    <% @pairs.each do |pair| %>
+    <tr>
+      <td><%= n %></td>
+      <td class="background-grey"><%= pair.currency1_code %></td>
+      <td><%= @currencies.find_by_code(pair.currency1_code).name%></td>
+      <td class="background-grey"><%= pair.currency2_code %></td>
+      <td><%= @currencies.find_by_code(pair.currency2_code).name%></td>
+    </tr>  
+    <% n += 1 %>
+    <% end %>
+  </table>
+</div>

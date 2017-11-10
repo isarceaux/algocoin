@@ -1,0 +1,37 @@
+<div class="container">
+  <h1>List of trios</h1>
+  <p>Voici la liste de toutes les trios où des arbitrages peuvent être testés sur Poloniex</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th colspan="2">Currency 1</th>
+        <th colspan="2">Currency 2</th>
+        <th colspan="2">Currency 3</th>
+      </tr>
+      <tr>
+        <th>ID</th>
+        <th class="background-grey">Code</th>
+        <th>Nom</th>
+        <th class="background-grey">Code</th>
+        <th>Nom</th>
+        <th class="background-grey">Code</th>
+        <th>Nom</th>
+      </tr>
+    </thead>
+    <% n = 1 %>
+    <% @trios.each do |trio| %>
+    <tr>
+      <td><%= n %></td>
+      <td class="background-grey"><%= trio.currency1_code %></td>
+      <td><%= @currencies.find_by_code(trio.currency1_code).name%></td>
+      <td class="background-grey"><%= trio.currency2_code %></td>
+      <td><%= @currencies.find_by_code(trio.currency2_code).name%></td>
+      <td class="background-grey"><%= trio.currency3_code %></td>
+      <td><%= @currencies.find_by_code(trio.currency3_code).name%></td>
+    </tr> 
+    <% n += 1 %> 
+    <% end %>
+  </table>
+</div>
