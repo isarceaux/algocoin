@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171110112326) do
+ActiveRecord::Schema.define(version: 20171113190551) do
 
   create_table "currencies", force: :cascade do |t|
     t.string "code"
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 20171110112326) do
     t.string "currency2_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "pairs", force: :cascade do |t|
+    t.integer "first_currency_id"
+    t.integer "second_currency_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["first_currency_id"], name: "index_pairs_on_first_currency_id"
+    t.index ["second_currency_id"], name: "index_pairs_on_second_currency_id"
   end
 
   create_table "trios", force: :cascade do |t|
