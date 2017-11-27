@@ -1,2 +1,0 @@
-class Duo < ApplicationRecord
-end

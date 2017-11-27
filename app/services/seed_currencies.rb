@@ -8,7 +8,10 @@ class SeedCurrencies
   def perform
     currencies = HTTParty.get(url_build('returnCurrencies')).parsed_response
     currencies.each do |currency|
-      Currency.initialize(currency)
+      cnew = Currency.new
+      cnew.code = currency[0]
+      cnew.name = currency[1]["name"]
+      cnew.save
     end
   end
 

@@ -19,13 +19,6 @@ ActiveRecord::Schema.define(version: 20171113190551) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "duos", force: :cascade do |t|
-    t.string "currency1_code"
-    t.string "currency2_code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "pairs", force: :cascade do |t|
     t.integer "first_currency_id"
     t.integer "second_currency_id"
@@ -36,11 +29,14 @@ ActiveRecord::Schema.define(version: 20171113190551) do
   end
 
   create_table "trios", force: :cascade do |t|
-    t.string "currency1_code"
-    t.string "currency2_code"
-    t.string "currency3_code"
+    t.integer "first_currency_id"
+    t.integer "second_currency_id"
+    t.integer "third_currency_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["first_currency_id"], name: "index_trios_on_first_currency_id"
+    t.index ["second_currency_id"], name: "index_trios_on_second_currency_id"
+    t.index ["third_currency_id"], name: "index_trios_on_third_currency_id"
   end
 
 end
