@@ -8,9 +8,9 @@ class SeedPairs
 
   def perform
     currencies = Currency.all
+
     mother_currencies_codes = ['XMR','ETH','USDT','BTC']
     mother_currencies = []
-
     mother_currencies_codes.each do |mc_code|
       mother_currencies << Currency.find_by_code(mc_code) 
     end

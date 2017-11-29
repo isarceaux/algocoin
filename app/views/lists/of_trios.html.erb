@@ -24,12 +24,12 @@
     <% @trios.each do |trio| %>
     <tr>
       <td><%= n %></td>
-      <td class="background-grey"><%= trio.currency1_code %></td>
-      <td><%= @currencies.find_by_code(trio.currency1_code).name%></td>
-      <td class="background-grey"><%= trio.currency2_code %></td>
-      <td><%= @currencies.find_by_code(trio.currency2_code).name%></td>
-      <td class="background-grey"><%= trio.currency3_code %></td>
-      <td><%= @currencies.find_by_code(trio.currency3_code).name%></td>
+      <td class="background-grey"><%= trio.first_currency.code %></td>
+      <td><%= trio.first_currency.name%></td>
+      <td class="background-grey"><%= trio.second_currency.code %></td>
+      <td><%= trio.second_currency.name%></td>
+      <td class="background-grey"><%= trio.third_currency.code %></td>
+      <td><%= trio.third_currency.name%></td>
     </tr> 
     <% n += 1 %> 
     <% end %>

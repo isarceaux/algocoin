@@ -20,10 +20,10 @@
     <% @pairs.each do |pair| %>
     <tr>
       <td><%= n %></td>
-      <td class="background-grey"><%= pair.currency1_code %></td>
-      <td><%= @currencies.find_by_code(pair.currency1_code).name%></td>
-      <td class="background-grey"><%= pair.currency2_code %></td>
-      <td><%= @currencies.find_by_code(pair.currency2_code).name%></td>
+      <td class="background-grey"><%= pair.first_currency.code %></td>
+      <td><%= pair.first_currency.name %></td>
+      <td class="background-grey"><%= pair.second_currency.code %></td>
+      <td><%= pair.second_currency.name %></td>
     </tr>  
     <% n += 1 %>
     <% end %>

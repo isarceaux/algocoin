@@ -5,7 +5,7 @@ class ListsController < ApplicationController
   end
 
   def of_pairs
-    @pairs = Duo.all
+    @pairs = Pair.all
     @currencies = Currency.all
   end
 
