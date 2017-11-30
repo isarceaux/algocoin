@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171129134406) do
+ActiveRecord::Schema.define(version: 20171130172817) do
+
+  create_table "arbitrages", force: :cascade do |t|
+    t.integer "trio_id"
+    t.integer "first_order_book_id"
+    t.integer "second_order_book_id"
+    t.integer "third_order_book_id"
+    t.float "raw_ratio"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["first_order_book_id"], name: "index_arbitrages_on_first_order_book_id"
+    t.index ["second_order_book_id"], name: "index_arbitrages_on_second_order_book_id"
+    t.index ["third_order_book_id"], name: "index_arbitrages_on_third_order_book_id"
+    t.index ["trio_id"], name: "index_arbitrages_on_trio_id"
+  end
 
   create_table "currencies", force: :cascade do |t|
     t.string "code"
