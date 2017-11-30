@@ -1,7 +1,7 @@
 class SidekiqLaunch
 
   def initialize
-    GettingOrderBookWorker.new.perform
+    GettingOrderBookWorker.perform_async(10)
   end
 
   def perform

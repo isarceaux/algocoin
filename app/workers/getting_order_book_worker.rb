@@ -7,8 +7,8 @@ class GettingOrderBookWorker
   def intialize
   end
 
-  def perform
-    getting_order_books(10)
+  def perform(depth)
+    getting_order_books(depth)
   end
 
   def getting_order_books(depth)
