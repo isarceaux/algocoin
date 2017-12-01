@@ -1,0 +1,15 @@
+<div class="container">
+  <h1>Analyse des arbitrages</h1>
+
+  <p>Nous avons analysé <%= @arbitrage_count %> opportunités d'abritrage !</p>
+  <p>Cela correspond à la collecte de <%= @order_book_count %> Order Books.</p>
+
+  <p>Arbitrages sélectionnés pour une barrière de <%= @barrier %> : <%= @arbitrage_selection.count %>. </p>
+
+  <ul>
+    <% @arbitrage_selection.each do |arbitrage| %>
+    <li><%= arbitrage.id %></li>
+    <% end %>
+  </ul>
+
+</div>
