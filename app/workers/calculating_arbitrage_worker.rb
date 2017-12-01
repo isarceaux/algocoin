@@ -18,14 +18,19 @@ class CalculatingArbitrageWorker
       second_order_book = getting_order_books(trio.second_currency, trio.third_currency, depth)
       third_order_book = getting_order_books(trio.first_currency, trio.third_currency, depth)
       ratio = (1 / first_order_book.ask_hash.last[0].to_f) * (1 / second_order_book.ask_hash.last[0].to_f) * third_order_book.bid_hash.first[0].to_f
-
-      new_arbitrage                   = Arbitrage.new
-      new_arbitrage.trio              = trio
-      new_arbitrage.first_order_book  = first_order_book
-      new_arbitrage.second_order_book = second_order_book
-      new_arbitrage.third_order_book  = third_order_book
-      new_arbitrage.raw_ratio         = ratio
-      new_arbitrage.save
+      if ratio > 1
+        new_arbitrage                   = Arbitrage.new
+        new_arbitrage.trio              = trio
+        new_arbitrage.first_order_book  = first_order_book
+        new_arbitrage.second_order_book = second_order_book
+        new_arbitrage.third_order_book  = third_order_book
+        new_arbitrage.raw_ratio         = ratio
+        new_arbitrage.save
+      else
+        first_order_book.destroy
+        second_order_book.destroy
+        third_order_book.destroy
+      end
 
     end
     
