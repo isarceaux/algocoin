@@ -6,10 +6,25 @@
 
   <p>Arbitrages sélectionnés pour une barrière de <%= @barrier %> : <%= @arbitrage_selection.count %>. </p>
 
-  <ul>
-    <% @arbitrage_selection.each do |arbitrage| %>
-    <li><%= arbitrage.id %></li>
-    <% end %>
-  </ul>
-
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th class="background-grey">Trio</th>
+        <th>Raw Ratio</th>
+        <th class="background-grey">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @arbitrage_selection.each do |arbitrage| %>
+      <tr>
+        <td><%= arbitrage.id %></td>
+        <td class="background-grey"><%= arbitrage.trio.first_currency.code %> > <%= arbitrage.trio.second_currency.code %> > <%= arbitrage.trio.third_currency.code %></td>
+        <td><%= arbitrage.raw_ratio.round(4) %></td>
+        <td class="background-grey"><%= arbitrage.created_at %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+    
 </div>
