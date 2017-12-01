@@ -14,4 +14,10 @@
 //= require turbolinks
 //= require jquery
 //= require bootstrap
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require_tree .
+
+$(document).ready(function() {
+    $('#arbitrages').DataTable();
+} );
