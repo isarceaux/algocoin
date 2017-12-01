@@ -2,7 +2,7 @@ class SidekiqLaunch
 
   def initialize
     # CalculatingArbitrageWorker.perform_async
-    Arbitrage.pluck('id').each do |id|
+    OrderBook.pluck('id').each do |id|
       ClearingDbWorker.perform_async(id)
     end
   end

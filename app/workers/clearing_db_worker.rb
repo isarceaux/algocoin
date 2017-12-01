@@ -6,6 +6,6 @@ class ClearingDbWorker
   end
 
   def perform(id)
-    Arbitrage.find(id).destroy
+    OrderBook.find(id).destroy
   end
 end
