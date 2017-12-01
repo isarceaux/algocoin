@@ -20,6 +20,9 @@
 
 $(document).ready(function() {
     $('#arbitrages').DataTable({
-      
+      dom: 'Bfrtip',
+      buttons: [
+            'csv', 'excel'
+        ]
     });
 } );
