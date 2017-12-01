@@ -2,7 +2,9 @@ class SidekiqLaunch
 
   def initialize
     
-    CalculatingArbitrageWorker.perform_async
+    1000000.times do
+      CalculatingArbitrageWorker.perform_async
+    end
 
     ## To clear data uncomment these lines
     # OrderBook.pluck('id').each do |id|
