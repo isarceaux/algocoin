@@ -1,5 +1,7 @@
 class ArbitragesController < ApplicationController
 
+  before_action :authenticate_user!
+
   def index
     @order_book_count = OrderBook.all.count
     @barrier = 1

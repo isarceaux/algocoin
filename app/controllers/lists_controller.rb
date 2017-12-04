@@ -1,5 +1,7 @@
 class ListsController < ApplicationController
 
+  before_action :authenticate_user!
+
   def of_currencies
     @currencies = Currency.all
   end

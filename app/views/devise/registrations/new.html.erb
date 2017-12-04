@@ -5,6 +5,11 @@
     <%= devise_error_messages! %>
 
     <div class="field">
+      <%= f.label :pseudo %><br />
+      <%= f.text_field :pseudo, autofocus: true %>
+    </div>
+
+    <div class="field">
       <%= f.label :email %><br />
       <%= f.email_field :email, autofocus: true %>
     </div>
@@ -20,6 +25,11 @@
     <div class="field">
       <%= f.label :password_confirmation %><br />
       <%= f.password_field :password_confirmation, autocomplete: "off" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :sign_up_code %><br />
+      <%= f.text_field :sign_up_code %>
     </div>
 
     <div class="actions">
