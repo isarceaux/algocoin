@@ -4,23 +4,26 @@
   <p>Nous avons trouvé <%= @arbitrage_selection.count %> opportunités d'abritrage !</p>
   <p>Arbitrages sélectionnés pour une barrière de <%= @barrier %>.</p>
 
-  <table id="arbitrages">
+  <table class="table table-condensed table-hover" id="arbitrages">
     <thead>
       <tr>
         <th>Id</th>
-        <th class="background-grey">Trio</th>
+        <th>Trio</th>
         <th>Raw Ratio</th>
-        <th class="background-grey">Time</th>
+        <th>Time</th>
+        <th>+</th>
       </tr>
     </thead>
     <tbody>
       <% @arbitrage_selection.each do |arbitrage| %>
       <tr>
         <td><%= arbitrage.id %></td>
-        <td class="background-grey"><%= arbitrage.trio.first_currency.code %> > <%= arbitrage.trio.second_currency.code %> > <%= arbitrage.trio.third_currency.code %></td>
+        <td><%= arbitrage.trio.first_currency.code %> > <%= arbitrage.trio.second_currency.code %> > <%= arbitrage.trio.third_currency.code %></td>
         <td><%= arbitrage.raw_ratio.round(4) %></td>
-        <td class="background-grey"><%= arbitrage.created_at %></td>
+        <td><%= arbitrage.created_at %></td>
+        <td><%= link_to 'Details', arbitrage %></td>
       </tr>
+      
       <% end %>
     </tbody>
   </table>

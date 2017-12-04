@@ -10,7 +10,8 @@ Rails.application.routes.draw do
   get 'pages/home'
   root 'pages#home'
 
-  get 'arbitrages', to: 'arbitrages#index'
+  resources :arbitrages
+  # get 'arbitrages', to: 'arbitrages#index'
 
   mount Sidekiq::Web => '/sidekiq'
 
