@@ -46,7 +46,7 @@
           <td><%= @arbitrage.first_order_book.bid_hash[9][0].to_f.round(4) %></td>
           <td><%= @arbitrage.first_order_book.bid_hash[9][1].round(4) %></td>
           <td class="success rank_column">10</td>
-          <td class="success"><%= @arbitrage.first_order_book.ask_hash[9][0].to_f.round(4) %></td>
+          <td class="success"><%= @arbitrage.first_order_book.ask_hash[9][0].to_f.round(10) %></td>
           <td class="success"><%= @arbitrage.first_order_book.ask_hash[9][1].round(4) %></td>
         </tr>
         </table>
@@ -70,20 +70,20 @@
         <% 9.times do %>
           <tr>
             <td class="rank_column"><%= rank %></td>
-            <td><%= @arbitrage.second_order_book.bid_hash[rank-1][0].to_f.round(4) %></td>
+            <td><%= @arbitrage.second_order_book.bid_hash[rank-1][0].to_f.round(8) %></td>
             <td><%= @arbitrage.second_order_book.bid_hash[rank-1][1].round(4) %></td>
             <td class="rank_column"><%= rank %></td>
-            <td><%= @arbitrage.second_order_book.ask_hash[rank-1][0].to_f.round(4) %></td>
+            <td><%= @arbitrage.second_order_book.ask_hash[rank-1][0].to_f.round(8) %></td>
             <td><%= @arbitrage.second_order_book.ask_hash[rank-1][1].round(4) %></td>
           </tr>
           <% rank += 1 %>
         <% end %>
         <tr>
           <td class="rank_column">10</td>
-          <td><%= @arbitrage.second_order_book.bid_hash[9][0].to_f.round(4) %></td>
+          <td><%= @arbitrage.second_order_book.bid_hash[9][0].to_f.round(8) %></td>
           <td><%= @arbitrage.second_order_book.bid_hash[9][1].round(4) %></td>
           <td class="success rank_column">10</td>
-          <td class="success"><%= @arbitrage.second_order_book.ask_hash[9][0].to_f.round(4) %></td>
+          <td class="success"><%= @arbitrage.second_order_book.ask_hash[9][0].to_f.round(8) %></td>
           <td class="success"><%= @arbitrage.second_order_book.ask_hash[9][1].round(4) %></td>
         </tr>
         </table>
@@ -105,20 +105,20 @@
           </tr>
         <tr>
           <td class="success rank_column">1</td>
-          <td class="success"><%= @arbitrage.second_order_book.bid_hash[0][0].to_f.round(4) %></td>
+          <td class="success"><%= @arbitrage.second_order_book.bid_hash[0][0].to_f.round(8) %></td>
           <td class="success"><%= @arbitrage.second_order_book.bid_hash[0][1].round(4) %></td>
           <td class="rank_column">1</td>
-          <td><%= @arbitrage.second_order_book.ask_hash[0][0].to_f.round(4) %></td>
+          <td><%= @arbitrage.second_order_book.ask_hash[0][0].to_f.round(8) %></td>
           <td><%= @arbitrage.second_order_book.ask_hash[0][1].round(4) %></td>
         </tr>
         <% rank = 2 %>
         <% 9.times do %>
           <tr>
             <td class="rank_column"><%= rank %></td>
-            <td><%= @arbitrage.second_order_book.bid_hash[rank-1][0].to_f.round(4) %></td>
+            <td><%= @arbitrage.second_order_book.bid_hash[rank-1][0].to_f.round(8) %></td>
             <td><%= @arbitrage.second_order_book.bid_hash[rank-1][1].round(4) %></td>
             <td class="rank_column"><%= rank %></td>
-            <td><%= @arbitrage.second_order_book.ask_hash[rank-1][0].to_f.round(4) %></td>
+            <td><%= @arbitrage.second_order_book.ask_hash[rank-1][0].to_f.round(8) %></td>
             <td><%= @arbitrage.second_order_book.ask_hash[rank-1][1].round(4) %></td>
           </tr>
           <% rank += 1 %>
