@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171130172817) do
+ActiveRecord::Schema.define(version: 20171204172229) do
 
   create_table "arbitrages", force: :cascade do |t|
     t.integer "trio_id"
@@ -20,10 +20,12 @@ ActiveRecord::Schema.define(version: 20171130172817) do
     t.float "raw_ratio"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "worst_ratio"
     t.index ["first_order_book_id"], name: "index_arbitrages_on_first_order_book_id"
     t.index ["second_order_book_id"], name: "index_arbitrages_on_second_order_book_id"
     t.index ["third_order_book_id"], name: "index_arbitrages_on_third_order_book_id"
     t.index ["trio_id"], name: "index_arbitrages_on_trio_id"
+    t.index ["worst_ratio"], name: "index_arbitrages_on_worst_ratio"
   end
 
   create_table "currencies", force: :cascade do |t|

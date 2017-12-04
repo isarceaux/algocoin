@@ -9,6 +9,7 @@
       <tr>
         <th>Id</th>
         <th>Trio</th>
+        <th>Worst Ratio</th>
         <th>Raw Ratio</th>
         <th>Time</th>
         <th>+</th>
@@ -19,6 +20,7 @@
       <tr>
         <td><%= arbitrage.id %></td>
         <td><%= arbitrage.trio.first_currency.code %> > <%= arbitrage.trio.second_currency.code %> > <%= arbitrage.trio.third_currency.code %></td>
+        <td><%= arbitrage.worst_ratio != nil ? (arbitrage.worst_ratio.round(4)) : nil %></td>
         <td><%= arbitrage.raw_ratio.round(4) %></td>
         <td><%= arbitrage.created_at %></td>
         <td><%= link_to 'Details', arbitrage %></td>
