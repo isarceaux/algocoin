@@ -6,11 +6,25 @@
     <li><b>Trio</b> : <%= @arbitrage.trio.first_currency.code %> > <%= @arbitrage.trio.second_currency.code %> > <%= @arbitrage.trio.third_currency.code %></li>
     <li><b>Time</b> : <%= @arbitrage.created_at %></li>
     <li><b>Raw Ratio</b> (before transaction costs) : <%= @arbitrage.raw_ratio.round(5) %></li>
+    <li><b>Worst Ratio</b> (before transaction costs) : <%= @arbitrage.worst_ratio.round(5) %></li>
   </ul>
 
-  <p>La formule utilisée pour calculer le raw ratio est la suivante :
-  1/(dernier_ask 1ère paire) * 1/(dernier_ask 2ème paire) * (1er bid de la 3ème paire)</p>
-  <p>Seront highlighté en vert les valeurs des orders books qui sont utilisés pour calculer le ratio.</p>
+  <h5>Formules de calculs</h5>
+  <ul>
+    <li>Raw Ratio
+      <ul>
+        <li>La formule utilisée pour calculer le raw ratio est la suivante : 1/(dernier_ask 1ère paire) * 1/(dernier_ask 2ème paire) * (1er bid de la 3ème paire)</li>
+        <li>Seront highlighté en vert les valeurs des orders books qui sont utilisés pour calculer le ratio.</li>
+      </ul>
+    </li>
+    <li>Worst Ratio
+      <ul>
+        <li>La formule utilisée pour calculer le raw ratio est la suivante : 1/(premier_ask 1ère paire) * 1/(premier_ask 2ème paire) * (Dernier bid de la 3ème paire)</li>
+        <li>Seront highlighté en rouge les valeurs des orders books qui sont utilisés pour calculer le ratio.</li>
+      </ul>
+    </li>
+  </ul>
+    
 
   <h1>Analyse des 3 paires de transactions</h1>
 
@@ -29,8 +43,16 @@
             <th>Price</th>
             <th>Volume</th>
           </tr>
-        <% rank = 1 %>
-        <% 9.times do %>
+        <tr>
+          <td class="rank_column">1</td>
+          <td><%= @arbitrage.first_order_book.bid_hash[0][0].to_f.round(4) %></td>
+          <td><%= @arbitrage.first_order_book.bid_hash[0][1].round(4) %></td>
+          <td class="danger rank_column">1</td>
+          <td class="danger"><%= @arbitrage.first_order_book.ask_hash[0][0].to_f.round(10) %></td>
+          <td class="danger"><%= @arbitrage.first_order_book.ask_hash[0][1].round(4) %></td>
+        </tr>
+        <% rank = 2 %>
+        <% 8.times do %>
           <tr>
             <td class="rank_column"><%= rank %></td>
             <td><%= @arbitrage.first_order_book.bid_hash[rank-1][0].to_f.round(4) %></td>
@@ -66,8 +88,16 @@
             <th>Price</th>
             <th>Volume</th>
           </tr>
-        <% rank = 1 %>
-        <% 9.times do %>
+        <tr>
+          <td class="rank_column">1</td>
+          <td><%= @arbitrage.second_order_book.bid_hash[0][0].to_f.round(4) %></td>
+          <td><%= @arbitrage.second_order_book.bid_hash[0][1].round(4) %></td>
+          <td class="danger rank_column">1</td>
+          <td class="danger"><%= @arbitrage.second_order_book.ask_hash[0][0].to_f.round(10) %></td>
+          <td class="danger"><%= @arbitrage.second_order_book.ask_hash[0][1].round(4) %></td>
+        </tr>
+        <% rank = 2 %>
+        <% 8.times do %>
           <tr>
             <td class="rank_column"><%= rank %></td>
             <td><%= @arbitrage.second_order_book.bid_hash[rank-1][0].to_f.round(8) %></td>
@@ -112,7 +142,7 @@
           <td><%= @arbitrage.third_order_book.ask_hash[0][1].round(4) %></td>
         </tr>
         <% rank = 2 %>
-        <% 9.times do %>
+        <% 8.times do %>
           <tr>
             <td class="rank_column"><%= rank %></td>
             <td><%= @arbitrage.third_order_book.bid_hash[rank-1][0].to_f.round(8) %></td>
@@ -123,6 +153,14 @@
           </tr>
           <% rank += 1 %>
         <% end %>
+        <tr>
+          <td class="danger rank_column">10</td>
+          <td class="danger"><%= @arbitrage.third_order_book.bid_hash[9][0].to_f.round(8) %></td>
+          <td class="danger"><%= @arbitrage.third_order_book.bid_hash[9][1].round(4) %></td>
+          <td class="rank_column">10</td>
+          <td><%= @arbitrage.third_order_book.ask_hash[9][0].to_f.round(8) %></td>
+          <td><%= @arbitrage.third_order_book.ask_hash[9][1].round(4) %></td>
+        </tr>
         
         </table>
 
