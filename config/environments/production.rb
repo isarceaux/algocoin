@@ -88,4 +88,41 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  #Configuring mailer to work in production
+  config.action_mailer.default_url_options = { protocol: 'http', :host => 'algo-coin.herokuapp.com' }
+
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.perform_deliveries = true
+  # config.action_mailer.raise_delivery_errors = true
+  # config.action_mailer.default :charset => "utf-8"
+
+  # config.action_mailer.smtp_settings = 
+  # {
+  # address:              'smtp.gmail.com',
+  # port:                 587,
+  # domain:               'gmail.com',
+  # user_name:            ENV["GMAIL_USERNAME"],
+  # password:             ENV["GMAIL_PWD"],
+  # authentication:       :plain,
+  # enable_starttls_auto: true
+  # }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default :charset => "utf-8"
+
+  config.action_mailer.smtp_settings = 
+  {
+    address: ENV['OVH_DOMAIN'],
+    port: 587,
+    domain: ENV["OVH_DOMAIN"],
+    authentication: "plain",
+    :enable_starttls_auto => true,
+    :openssl_verify_mode  => 'none',
+    user_name: ENV["OVH_USERNAME"],
+    password: ENV["OVH_PASSWORD"]
+  }
+
 end

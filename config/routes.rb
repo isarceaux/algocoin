@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  devise_for :users
   get 'lists/of_currencies'
 
   get 'lists/of_pairs'
