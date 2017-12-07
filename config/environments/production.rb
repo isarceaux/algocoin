@@ -90,12 +90,11 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   #Configuring mailer to work in production
-  #config.action_mailer.default_url_options = { :host => 'algo-coin.herokuapp.com' }
 
   #SendGrid Michael Hartl method
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  host = '<your heroku app>.herokuapp.com'
+  host = 'algo-coin.herokuapp.com'
   config.action_mailer.default_url_options = { host: host }
   ActionMailer::Base.smtp_settings = {
     :address        => 'smtp.sendgrid.net',
