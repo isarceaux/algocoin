@@ -2,7 +2,7 @@ class SidekiqLaunch
 
   def initialize
     
-    10.times do
+    100000.times do
       CalculatingArbitrageWorker.perform_async
     end
 
