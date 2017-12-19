@@ -27,6 +27,8 @@ gem 'jquery-datatables-rails', '~> 3.4.0'
 gem 'font-awesome-sass'
 gem 'figaro'
 gem 'httparty'
+gem 'rest-client'
+gem 'poloniex'
 # gem 'gon'
 
 
