@@ -1,8 +1,8 @@
 class SidekiqLaunch
 
-  def initialize
+  def initialize(number_of_times)
     
-    1000.times do
+    number_of_times.times do
       CalculatingArbitrageWorker.perform_async
     end
 
