@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204184604) do
+ActiveRecord::Schema.define(version: 20180118133943) do
 
   create_table "arbitrages", force: :cascade do |t|
     t.integer "trio_id"
@@ -52,6 +52,27 @@ ActiveRecord::Schema.define(version: 20171204184604) do
     t.datetime "updated_at", null: false
     t.index ["first_currency_id"], name: "index_pairs_on_first_currency_id"
     t.index ["second_currency_id"], name: "index_pairs_on_second_currency_id"
+  end
+
+  create_table "trades", force: :cascade do |t|
+    t.integer "poloniex_global_trade_id"
+    t.integer "poloniex_trade_id"
+    t.float "rate"
+    t.float "amount"
+    t.float "total"
+    t.float "fee"
+    t.integer "poloniex_order_number"
+    t.string "type"
+    t.string "category"
+    t.integer "pair_id"
+    t.time "trade_time"
+    t.integer "arbitrage_id"
+    t.boolean "passed_trade"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["arbitrage_id"], name: "index_trades_on_arbitrage_id"
+    t.index ["pair_id"], name: "index_trades_on_pair_id"
+    t.index ["trade_time"], name: "index_trades_on_trade_time"
   end
 
   create_table "trios", force: :cascade do |t|
