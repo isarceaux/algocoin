@@ -11,7 +11,8 @@ class CalculatingArbitrageWorker
 
   def perform
 
-    trios = Trio.all
+    # trios = Trio.all #Condition to be used in production
+    trios = Trio.first
     depth = 10
 
     trios.each do |trio|
@@ -22,7 +23,7 @@ class CalculatingArbitrageWorker
       ratio = (1 / first_order_book.ask_hash.last[0].to_f) * (1 / second_order_book.ask_hash.last[0].to_f) * third_order_book.bid_hash.first[0].to_f
       worst_ratio = (1 / first_order_book.ask_hash.first[0].to_f) * (1 / second_order_book.ask_hash.first[0].to_f) * third_order_book.bid_hash.last[0].to_f 
       # if ratio > 1.0025 #Condition to be used in production
-      if ration > 0.8 
+      if ratio > 0.8 
         new_arbitrage                   = Arbitrage.new
         new_arbitrage.trio              = trio
         new_arbitrage.first_order_book  = first_order_book
