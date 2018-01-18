@@ -11,6 +11,10 @@ class TestApi
       config.secret = ENV['SECRET_API_KEY_POLONIEX']
     end
 
+    # Example to get order books
+    pair_string = '' + Trio.first.first_currency.code  + '_' + Trio.first.second_currency.code
+    order_book = Poloniex.order_book(pair_string)
+    order_book_json = JSON.parse(order_book.body)
     binding.pry
 
   end
