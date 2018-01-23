@@ -9,7 +9,7 @@ class CalculatingArbitrageWorker
   def initialize
   end
 
-  def perform(ratio_value)
+  def perform(ratio_value) # ratio_value > 1.0025 #Condition to be used in production
 
     trios = Trio.all
     depth = 10
@@ -21,7 +21,6 @@ class CalculatingArbitrageWorker
       third_order_book = getting_order_books(trio.first_currency, trio.third_currency, depth)
       ratio = (1 / first_order_book.ask_hash.last[0].to_f) * (1 / second_order_book.ask_hash.last[0].to_f) * third_order_book.bid_hash.first[0].to_f
       worst_ratio = (1 / first_order_book.ask_hash.first[0].to_f) * (1 / second_order_book.ask_hash.first[0].to_f) * third_order_book.bid_hash.last[0].to_f 
-      # if ratio > 1.0025 #Condition to be used in production
       if ratio > ratio_value 
         new_arbitrage                   = Arbitrage.new
         new_arbitrage.trio              = trio
