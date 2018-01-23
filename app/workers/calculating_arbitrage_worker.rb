@@ -11,8 +11,7 @@ class CalculatingArbitrageWorker
 
   def perform
 
-    # trios = Trio.all #Condition to be used in production
-    trios = Trio.first
+    trios = Trio.all
     depth = 10
 
     trios.each do |trio|
@@ -39,6 +38,9 @@ class CalculatingArbitrageWorker
         third_order_book.destroy
       end
 
+      break #Used to only assess one trio in test, to be deleted in production
+      binding.pry #Should not be run, just additional security to try to stop the program in the break didn't work
+
     end
     
   end
@@ -58,16 +60,17 @@ class CalculatingArbitrageWorker
     rate1 = arbitrage.first_order_book.ask_hash[9][0].to_f
     amount1 = 0.0
     if arbitrage.trio.first_currency.code == 'USDT'
-      amount1 = UNIT_TEST_USDT / rate
+      amount1 = UNIT_TEST_USDT / rate1
     elsif arbitrage.trio.first_currency.code == 'BTC'
-      amount1 = UNIT_TEST_BTC / rate
+      amount1 = UNIT_TEST_BTC / rate1
     end
+    binding.pry
     trade1 = Poloniex.buy(pair_string1, rate1, amount1)
     Sidekiq.logger.info 'First trade was attempted'
     Sidekiq.logger.info JSON.parse(trade1)
 
     ##Record the trade
-    order_number = JSON.parse(trade1)['orderNumber'])
+    order_number = JSON.parse(trade1)['orderNumber']
     if JSON.parse(Poloniex.trade_history(pair_string1)).first['orderNumber'] == order_number
       Sidekiq.logger.info 'Found the trade in History will attempt to register it'
       trade_history = JSON.parse(Poloniex.trade_history(pair_string1)).first
@@ -79,14 +82,14 @@ class CalculatingArbitrageWorker
     pair_string2 = '' + arbitrage.trio.second_currency.code + '_' + arbitrage.trio.third_currency.code + ''
     Sidekiq.logger.info 'Passing second order for pair #{pair_string2}'
     rate2 = arbitrage.second_order_book.ask_hash[9][0].to_f
-    amount2 = amount1 * rate
+    amount2 = amount1 * rate2
     
     trade2 = Poloniex.buy(pair_string2, rate2, amount2)
     Sidekiq.logger.info 'Second trade was attempted'
     Sidekiq.logger.info JSON.parse(trade2)
 
     ##Record the trade
-    order_number = JSON.parse(trade2)['orderNumber'])
+    order_number = JSON.parse(trade2)['orderNumber']
     if JSON.parse(Poloniex.trade_history(pair_string2)).first['orderNumber'] == order_number
       Sidekiq.logger.info 'Found the trade in History will attempt to register it'
       trade_history = JSON.parse(Poloniex.trade_history(pair_string2)).first
@@ -105,7 +108,7 @@ class CalculatingArbitrageWorker
     Sidekiq.logger.info JSON.parse(trade3)
 
     ##Record the trade
-    order_number = JSON.parse(trade3)['orderNumber'])
+    order_number = JSON.parse(trade3)['orderNumber']
     if JSON.parse(Poloniex.trade_history(pair_string3)).first['orderNumber'] == order_number
       Sidekiq.logger.info 'Found the trade in History will attempt to register it'
       trade_history = JSON.parse(Poloniex.trade_history(pair_string3)).first
