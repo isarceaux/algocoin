@@ -2,10 +2,6 @@ class CalculatingArbitrageWorker
 
   include Sidekiq::Worker
 
-  URL_FIX_ZERO = 'https://poloniex.com/public?command='
-  UNIT_TEST_USDT = 2.0
-  UNIT_TEST_BTC = 0.00017
-
   def initialize
   end
 
