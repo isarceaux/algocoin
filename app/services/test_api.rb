@@ -13,12 +13,12 @@ class TestApi
 
     # Example to pass an order
     pair_string = '' + Trio.first.first_currency.code  + '_' + Trio.first.second_currency.code
-    rate = JSON.parse(Poloniex.order_book(pair_string).body)["bids"][10][0].to_f
-    amount = 0.00008649
+    # rate = JSON.parse(Poloniex.order_book(pair_string).body)["bids"][10][0].to_f
+    # amount = 0.00008649
     # Poloniex.sell(pair_string, rate, amount)
 
     #To check the trade history
-    JSON.parse(Poloniex.open_orders(pair_string)) #If the order wasn't passed
+    # JSON.parse(Poloniex.open_orders(pair_string)) #If the order wasn't passed
     JSON.parse(Poloniex.trade_history( pair_string)) #If the order has passed
 
     binding.pry

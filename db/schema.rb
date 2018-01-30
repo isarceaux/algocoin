@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118133943) do
+ActiveRecord::Schema.define(version: 20180124155424) do
 
   create_table "arbitrages", force: :cascade do |t|
     t.integer "trio_id"
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20180118133943) do
     t.float "amount"
     t.float "total"
     t.float "fee"
-    t.integer "poloniex_order_number"
+    t.string "poloniex_order_number"
     t.string "type"
     t.string "category"
     t.integer "pair_id"
