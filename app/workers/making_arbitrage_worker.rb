@@ -5,6 +5,7 @@ class MakingArbitrageWorker
   URL_FIX_ZERO = 'https://poloniex.com/public?command='
   UNIT_TEST_USDT = 2.0
   UNIT_TEST_BTC = 0.00017
+  TRANSACTION_FEE = 0.0025
 
   def initialize
   end
@@ -30,21 +31,21 @@ class MakingArbitrageWorker
         new_arbitrage.raw_ratio         = ratio
         new_arbitrage.worst_ratio       = worst_ratio
         new_arbitrage.save
-        pass_an_order(new_arbitrage)
+        make_arbitrage(new_arbitrage)
       else
         first_order_book.destroy
         second_order_book.destroy
         third_order_book.destroy
       end
 
-      break #Used to only assess one trio in test, to be deleted in production
+      # break #Used to only assess one trio in test, to be deleted in production
       binding.pry #Should not be run, just additional security to try to stop the program in the break didn't work
 
     end
     
   end
 
-  def pass_an_order(arbitrage)
+  def make_arbitrage(arbitrage)
 
     Sidekiq.logger.info 'We found an arbitrage and will try to pass orders'
 
@@ -53,71 +54,47 @@ class MakingArbitrageWorker
       config.secret = ENV['SECRET_API_KEY_POLONIEX']
     end
 
+    # Starting point
+    amount0 = 0.0 #For safety reasons
+    if arbitrage.trio.first_currency.code == 'USDT'
+      amount0 = UNIT_TEST_USDT
+    elsif arbitrage.trio.first_currency.code == 'BTC'
+      amount0 = UNIT_TEST_BTC
+    end
+
     # First order
     pair_string1 = '' + arbitrage.trio.first_currency.code + '_' + arbitrage.trio.second_currency.code + ''
-    Sidekiq.logger.info 'Passing first order for pair #{pair_string1}'
+    Sidekiq.logger.info "Passing first order for pair #{pair_string1}"
     rate1 = arbitrage.first_order_book.ask_hash[9][0].to_f
-    amount1 = 0.0
-    if arbitrage.trio.first_currency.code == 'USDT'
-      amount1 = UNIT_TEST_USDT / rate1
-    elsif arbitrage.trio.first_currency.code == 'BTC'
-      amount1 = UNIT_TEST_BTC / rate1
-    end
-    trade(pair_string1, rate1, amount1)
-  
-    ##Record the trade
-    # order_number = JSON.parse(trade1)['orderNumber']
-    # if JSON.parse(Poloniex.trade_history(pair_string1)).first['orderNumber'] == order_number
-    #   Sidekiq.logger.info 'Found the trade in History will attempt to register it'
-    #   trade_history = JSON.parse(Poloniex.trade_history(pair_string1)).first
-    #   record_trade(trade_history, arbitrage, arbitrage.first_order_book.pair, true)
-    # # Should create an elsif case when the order didn't pass but need to test it first...
-    # end
+    amount1 = amount0 / rate1
+    trade(pair_string1, rate1, amount1, "buy")
 
     # Second order
     pair_string2 = '' + arbitrage.trio.second_currency.code + '_' + arbitrage.trio.third_currency.code + ''
-    Sidekiq.logger.info 'Passing second order for pair #{pair_string2}'
+    Sidekiq.logger.info "Passing second order for pair #{pair_string2}"
     rate2 = arbitrage.second_order_book.ask_hash[9][0].to_f
-    amount2 = amount1 * rate2
-    
-    trade2 = Poloniex.buy(pair_string2, rate2, amount2)
-    Sidekiq.logger.info 'Second trade was attempted'
-    Sidekiq.logger.info JSON.parse(trade2)
-
-    # ##Record the trade
-    # order_number = JSON.parse(trade2)['orderNumber']
-    # if JSON.parse(Poloniex.trade_history(pair_string2)).first['orderNumber'] == order_number
-    #   Sidekiq.logger.info 'Found the trade in History will attempt to register it'
-    #   trade_history = JSON.parse(Poloniex.trade_history(pair_string2)).first
-    #   record_trade(trade_history, arbitrage, arbitrage.second_order_book.pair, true)
-    # # Should create an elsif case when the order didn't pass but need to test it first...
-    # end
+    amount2 = (amount1*(1-TRANSACTION_FEE)) / rate2
+    trade(pair_string2, rate2, amount2, "buy")
 
     # Third order
     pair_string3 = '' + arbitrage.trio.first_currency.code + '_' + arbitrage.trio.third_currency.code + ''
-    Sidekiq.logger.info 'Passing second order for pair #{pair_string3}'
-    rate3 = arbitrage.second_order_book.bid_hash[0][0].to_f
-    amount3 = amount2 * rate3
-    
-    trade3 = Poloniex.buy(pair_string3, rate3, amount3)
-    Sidekiq.logger.info 'Third trade was attempted'
-    Sidekiq.logger.info JSON.parse(trade3)
-
-    # ##Record the trade
-    # order_number = JSON.parse(trade3)['orderNumber']
-    # if JSON.parse(Poloniex.trade_history(pair_string3)).first['orderNumber'] == order_number
-    #   Sidekiq.logger.info 'Found the trade in History will attempt to register it'
-    #   trade_history = JSON.parse(Poloniex.trade_history(pair_string3)).first
-    #   record_trade(trade_history, arbitrage, arbitrage.third_order_book.pair, true)
-    # # Should create an elsif case when the order didn't pass but need to test it first...
-    # end
+    Sidekiq.logger.info "Passing third order for pair #{pair_string3}"
+    rate3 = arbitrage.third_order_book.bid_hash[0][0].to_f
+    trade(pair_string3, rate3, amount2*(1-TRANSACTION_FEE), "sell")
 
   end
 
-  def trade(pair_string, rate, amount)
-    trade1 = Poloniex.buy(pair_string, rate, amount)
-    Sidekiq.logger.info 'First trade was attempted'
-    Sidekiq.logger.info JSON.parse(trade1)
+  def trade(pair_string, rate, amount, buy_sell)
+    if buy_sell == "buy"
+      trade = Poloniex.buy(pair_string, rate, amount)
+    elsif buy_sell == "sell"
+      trade = Poloniex.sell(pair_string, rate, amount)
+    end
+      Sidekiq.logger.info 'Following trade attempted:'
+      Sidekiq.logger.info JSON.parse(trade)
+      Sidekiq.logger.info 'Matching trade history:'
+      GetTradesHistory.new(pair_string)
+    
   end
 
   def record_trade(trade_history, arbitrage, pair, passed_trade)
