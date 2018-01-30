@@ -1,4 +1,4 @@
-class CalculatingArbitrageWorker
+class MakingArbitrageWorker
 
   include Sidekiq::Worker
 
@@ -63,10 +63,8 @@ class CalculatingArbitrageWorker
     elsif arbitrage.trio.first_currency.code == 'BTC'
       amount1 = UNIT_TEST_BTC / rate1
     end
-    trade1 = Poloniex.buy(pair_string1, rate1, amount1)
-    Sidekiq.logger.info 'First trade was attempted'
-    Sidekiq.logger.info JSON.parse(trade1)
-
+    trade(pair_string1, rate1, amount1)
+  
     ##Record the trade
     # order_number = JSON.parse(trade1)['orderNumber']
     # if JSON.parse(Poloniex.trade_history(pair_string1)).first['orderNumber'] == order_number
@@ -114,6 +112,12 @@ class CalculatingArbitrageWorker
     # # Should create an elsif case when the order didn't pass but need to test it first...
     # end
 
+  end
+
+  def trade(pair_string, rate, amount)
+    trade1 = Poloniex.buy(pair_string, rate, amount)
+    Sidekiq.logger.info 'First trade was attempted'
+    Sidekiq.logger.info JSON.parse(trade1)
   end
 
   def record_trade(trade_history, arbitrage, pair, passed_trade)
