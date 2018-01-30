@@ -12,7 +12,7 @@ class GetTradesHistory
     end
 
     # Example to pass an order
-    Sidekiq.logger.info JSON.parse(Poloniex.trade_history( pair_string)) #If the order has passed
+    return JSON.parse(Poloniex.trade_history( pair_string)) #If the order has passed
 
     # binding.pry
 
