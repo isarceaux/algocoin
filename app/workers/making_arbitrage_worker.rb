@@ -92,7 +92,7 @@ class MakingArbitrageWorker
   end
 
   def trade(pair_string, rate, amount, buy_sell)
-
+    binding.pry
     if buy_sell == "buy"
       trade = Poloniex.buy(pair_string.to_s, rate.to_s, amount.to_s)
     elsif buy_sell == "sell"

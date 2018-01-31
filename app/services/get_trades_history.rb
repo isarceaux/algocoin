@@ -16,7 +16,6 @@ class GetTradesHistory
 
     # binding.pry
 
-
   end
 
   def perform
