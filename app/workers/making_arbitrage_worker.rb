@@ -25,7 +25,7 @@ class MakingArbitrageWorker
     trios = Trio.all
     depth = 10
 
-    trios.each do |trio|
+    trios.shuffle.each do |trio|
       
       first_order_book = getting_order_books(trio.first_currency, trio.second_currency, depth)
       second_order_book = getting_order_books(trio.second_currency, trio.third_currency, depth)
@@ -42,15 +42,16 @@ class MakingArbitrageWorker
         new_arbitrage.worst_ratio       = worst_ratio
         new_arbitrage.save
         make_arbitrage(new_arbitrage)
-        record_trades_of_arbitrage(new_arbitrage)
+        if @first_trade_successful && @second_trade_successful && @third_trade_successful
+          record_trades_of_arbitrage(new_arbitrage)
+        end
       else
         first_order_book.destroy
         second_order_book.destroy
         third_order_book.destroy
       end
 
-      # break #Used to only assess one trio in test, to be deleted in production
-      binding.pry #Should not be run, just additional security to try to stop the program in the break didn't work
+      # binding.pry #For testing reasons only
 
     end
     
@@ -59,6 +60,10 @@ class MakingArbitrageWorker
   def make_arbitrage(arbitrage)
 
     Sidekiq.logger.info 'We found an arbitrage and will try to pass orders'
+
+    @first_trade_successful = false
+    @second_trade_successful = false
+    @third_trade_successful = false
 
     # Starting point
     amount0 = 0.0 #For safety reasons
@@ -76,36 +81,45 @@ class MakingArbitrageWorker
     @first_trade_successful = trade(pair_string1, rate1.round(ROUNDING_LIMIT), amount1.round(ROUNDING_LIMIT), "buy")
 
     # Second order
-    pair_string2 = '' + arbitrage.trio.second_currency.code + '_' + arbitrage.trio.third_currency.code + ''
-    rate2 = arbitrage.second_order_book.ask_hash[0][0].to_f
-    amount2 = (amount1*(1-TRANSACTION_FEE)) / rate2
-    Sidekiq.logger.info "Passing second order for pair #{pair_string2}, rate #{rate2}, amount #{amount2}"
-    @second_trade_successful = trade(pair_string2, rate2.round(ROUNDING_LIMIT), amount2.round(ROUNDING_LIMIT), "buy")
+    if @first_trade_successful
+      pair_string2 = '' + arbitrage.trio.second_currency.code + '_' + arbitrage.trio.third_currency.code + ''
+      rate2 = arbitrage.second_order_book.ask_hash[0][0].to_f
+      amount2 = (amount1*(1-TRANSACTION_FEE)) / rate2
+      Sidekiq.logger.info "Passing second order for pair #{pair_string2}, rate #{rate2}, amount #{amount2}"
+      @second_trade_successful = trade(pair_string2, rate2.round(ROUNDING_LIMIT), amount2.round(ROUNDING_LIMIT), "buy")
+    end
 
     # Third order
-    pair_string3 = '' + arbitrage.trio.first_currency.code + '_' + arbitrage.trio.third_currency.code + ''
-    rate3 = arbitrage.third_order_book.bid_hash[9][0].to_f
-    amount2r = amount2*(1-TRANSACTION_FEE)
-    Sidekiq.logger.info "Passing third order for pair #{pair_string3}, rate #{rate3}, amount #{amount2r}"
-    @third_trade_successful = trade(pair_string3, rate3.round(ROUNDING_LIMIT), amount2r.round(ROUNDING_LIMIT), "sell")
+    if @first_trade_successful && @second_trade_successful
+      pair_string3 = '' + arbitrage.trio.first_currency.code + '_' + arbitrage.trio.third_currency.code + ''
+      rate3 = arbitrage.third_order_book.bid_hash[9][0].to_f
+      amount2r = amount2*(1-TRANSACTION_FEE)
+      Sidekiq.logger.info "Passing third order for pair #{pair_string3}, rate #{rate3}, amount #{amount2r}"
+      @third_trade_successful = trade(pair_string3, rate3.round(ROUNDING_LIMIT), amount2r.round(ROUNDING_LIMIT), "sell")
+    end
 
   end
 
   def trade(pair_string, rate, amount, buy_sell)
-    binding.pry
-    if buy_sell == "buy"
-      trade = Poloniex.buy(pair_string.to_s, rate.to_s, amount.to_s)
-    elsif buy_sell == "sell"
-      trade = Poloniex.sell(pair_string.to_s, rate.to_s, amount.to_s)
+    success_or_not = false
+    begin
+      trade = ""
+      if buy_sell == "buy"
+        trade = Poloniex.buy(pair_string.to_s, rate.to_s, amount.to_s)
+      elsif buy_sell == "sell"
+        trade = Poloniex.sell(pair_string.to_s, rate.to_s, amount.to_s)
+      end
+      trade_info       = {}
+      trade_histo_info = {}
+      trade_info       = JSON.parse(trade)
+      trade_histo_info = JSON.parse(Poloniex.trade_history(pair_string)).first
+      Sidekiq.logger.info "Following trade attempted:#{trade_info}"
+      Sidekiq.logger.info "Matching trade history:#{trade_histo_info}"
+      success_or_not = trade_histo_info["orderNumber"] == trade_info["orderNumber"]
+    rescue
+      Sidekiq.logger.info "Trade could not pass"
     end
-
-    trade_info       = JSON.parse(trade)
-    trade_histo_info = JSON.parse(Poloniex.trade_history( pair_string)).first
-
-    Sidekiq.logger.info "Following trade attempted:#{trade_info}"
-    Sidekiq.logger.info "Matching trade history:#{trade_histo_info}"
-    
-    return trade_histo_info["orderNumber"] == trade_info["orderNumber"]
+    return success_or_not
   end
 
   def record_trades_of_arbitrage(arbitrage)
@@ -116,7 +130,11 @@ class MakingArbitrageWorker
 
   def record_trade(pair, arbitrage, passed_trade = true)
     pair_string = '' + pair.first_currency.code + '_' + pair.second_currency.code
-    trade_history                  = JSON.parse(Poloniex.trade_history(pair_string)).first
+    begin
+      trade_history                  = JSON.parse(Poloniex.trade_history(pair_string)).first
+    rescue
+      trade_history                  = JSON.parse(Poloniex.trade_history(pair_string)).first
+    end
     trade                          = Trade.new
     trade.poloniex_global_trade_id = trade_history['globalTradeID'].to_i
     trade.poloniex_trade_id        = trade_history['tradeID'].to_i
