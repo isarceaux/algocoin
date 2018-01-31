@@ -4,10 +4,11 @@ class MakingArbitrageWorker
 
   attr_accessor :first_trade_successful, :second_trade_successful, :third_trade_successful
 
-  URL_FIX_ZERO = 'https://poloniex.com/public?command='
-  UNIT_TEST_USDT = 2.0
-  UNIT_TEST_BTC = 0.00017
+  URL_FIX_ZERO    = 'https://poloniex.com/public?command='
+  UNIT_TEST_USDT  = 2.0
+  UNIT_TEST_BTC   = 0.00017
   TRANSACTION_FEE = 0.0025
+  ROUNDING_LIMIT  = 10
 
   def initialize
     Poloniex.setup do | config |
@@ -72,30 +73,30 @@ class MakingArbitrageWorker
     rate1 = arbitrage.first_order_book.ask_hash[0][0].to_f
     amount1 = amount0 / rate1
     Sidekiq.logger.info "Passing first order for pair #{pair_string1}, rate #{rate1}, amount #{amount1}"
-    @first_trade_successful = trade(pair_string1, rate1, amount1, "buy")
+    @first_trade_successful = trade(pair_string1, rate1.round(ROUNDING_LIMIT), amount1.round(ROUNDING_LIMIT), "buy")
 
     # Second order
     pair_string2 = '' + arbitrage.trio.second_currency.code + '_' + arbitrage.trio.third_currency.code + ''
     rate2 = arbitrage.second_order_book.ask_hash[0][0].to_f
     amount2 = (amount1*(1-TRANSACTION_FEE)) / rate2
     Sidekiq.logger.info "Passing second order for pair #{pair_string2}, rate #{rate2}, amount #{amount2}"
-    @second_trade_successful = trade(pair_string2, rate2, amount2, "buy")
+    @second_trade_successful = trade(pair_string2, rate2.round(ROUNDING_LIMIT), amount2.round(ROUNDING_LIMIT), "buy")
 
     # Third order
     pair_string3 = '' + arbitrage.trio.first_currency.code + '_' + arbitrage.trio.third_currency.code + ''
     rate3 = arbitrage.third_order_book.bid_hash[9][0].to_f
     amount2r = amount2*(1-TRANSACTION_FEE)
     Sidekiq.logger.info "Passing third order for pair #{pair_string3}, rate #{rate3}, amount #{amount2r}"
-    @third_trade_successful = trade(pair_string3, rate3, amount2r, "sell")
+    @third_trade_successful = trade(pair_string3, rate3.round(ROUNDING_LIMIT), amount2r.round(ROUNDING_LIMIT), "sell")
 
   end
 
   def trade(pair_string, rate, amount, buy_sell)
-    success_or_not = false
+
     if buy_sell == "buy"
-      trade = Poloniex.buy(pair_string, rate, amount)
+      trade = Poloniex.buy(pair_string.to_s, rate.to_s, amount.to_s)
     elsif buy_sell == "sell"
-      trade = Poloniex.sell(pair_string, rate, amount)
+      trade = Poloniex.sell(pair_string.to_s, rate.to_s, amount.to_s)
     end
 
     trade_info       = JSON.parse(trade)
