@@ -132,25 +132,30 @@ class MakingArbitrageWorker
     pair_string = '' + pair.first_currency.code + '_' + pair.second_currency.code
     begin
       trade_history                  = JSON.parse(Poloniex.trade_history(pair_string)).first
+      trade                          = Trade.new
+      trade.poloniex_global_trade_id = trade_history['globalTradeID'].to_i
+      trade.poloniex_trade_id        = trade_history['tradeID'].to_i
+      trade.rate                     = trade_history['rate'].to_f
+      trade.amount                   = trade_history['amount'].to_f
+      trade.total                    = trade_history['total'].to_f
+      trade.fee                      = trade_history['fee'].to_f
+      trade.poloniex_order_number    = trade_history['orderNumber']
+      trade.buy_or_sell              = trade_history['type']
+      trade.category                 = trade_history['category']
+      trade.pair                     = pair
+      trade.trade_time               = trade_history['date'].to_time
+      trade.arbitrage                = arbitrage
+      trade.passed_trade             = passed_trade
+      trade.save
+      Sidekiq.logger.info 'A new trade was well recorded'
     rescue
-      trade_history                  = JSON.parse(Poloniex.trade_history(pair_string)).first
+      trade                          = Trade.new
+      trade.pair                     = pair
+      trade.trade_time               = Time.now
+      trade.arbitrage                = arbitrage
+      trade.passed_trade             = passed_trade
+      trade.save
     end
-    trade                          = Trade.new
-    trade.poloniex_global_trade_id = trade_history['globalTradeID'].to_i
-    trade.poloniex_trade_id        = trade_history['tradeID'].to_i
-    trade.rate                     = trade_history['rate'].to_f
-    trade.amount                   = trade_history['amount'].to_f
-    trade.total                    = trade_history['total'].to_f
-    trade.fee                      = trade_history['fee'].to_f
-    trade.poloniex_order_number    = trade_history['orderNumber']
-    trade.buy_or_sell              = trade_history['type']
-    trade.category                 = trade_history['category']
-    trade.pair                     = pair
-    trade.trade_time               = trade_history['date'].to_time
-    trade.arbitrage                = arbitrage
-    trade.passed_trade             = passed_trade
-    trade.save
-    Sidekiq.logger.info 'A new trade was recorded'
   end
 
   def getting_order_books(first_currency, second_currency, depth)
