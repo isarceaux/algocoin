@@ -5,7 +5,7 @@ class ArbitragesController < ApplicationController
   def index
     @order_book_count = OrderBook.all.count
     @barrier = 1.0076
-    @arbitrage_selection = Arbitrage.where("worst_ratio > ?",@barrier)
+    @arbitrage_selection = Arbitrage.where("raw_ratio > ?",@barrier)
   end
 
   def show
