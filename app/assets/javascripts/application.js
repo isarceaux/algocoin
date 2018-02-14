@@ -25,4 +25,11 @@ $(document).ready(function() {
             'csv', 'excel'
         ]
     });
+    $('#trades').DataTable({
+      "paging":   false,
+      dom: 'Bfrtip',
+      buttons: [
+            'csv', 'excel'
+        ]
+    });
 } );

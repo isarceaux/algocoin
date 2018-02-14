@@ -1,6 +1,8 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  get 'trades', to: 'trades#index'
+
   devise_for :users
   get 'lists/of_currencies'
 

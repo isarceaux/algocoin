@@ -1,0 +1,41 @@
+<div class="container">
+  <h1>Analyse des trades</h1>
+
+  <p>Nous avons enregistré <%= @trades.count %> trades !</p>
+
+  <table class="table table-condensed table-hover" id="trades">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Type</th>
+        <th>Pair</th>
+        <th>Rate</th>
+        <th>Amount</th>
+        <th>Total</th>
+        <th>Fee</th>
+        <th>Arbitrage ID</th>
+        <th>Trio</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @trades.each do |trade| %>
+      <tr>
+        <td><%= trade.id %></td>
+        <td><%= trade.buy_or_sell %></td>
+        <td><%= trade.pair.first_currency.code %> > <%= trade.pair.second_currency.code %></td>
+        <td><%= trade.rate %></td>
+        <td><%= trade.amount %></td>
+        <td><%= trade.total %></td>
+        <td><%= trade.fee %></td>
+        <td><%= link_to trade.arbitrage.id, trade.arbitrage %></td>
+        <td><%= trade.arbitrage.trio.first_currency.code%> > <%= trade.arbitrage.trio.second_currency.code%> > <%= trade.arbitrage.trio.third_currency.code%></td>
+        <td><%= trade.created_at %></td>
+      </tr>
+      
+      <% end %>
+    </tbody>
+  </table>
+    
+</div>
+
