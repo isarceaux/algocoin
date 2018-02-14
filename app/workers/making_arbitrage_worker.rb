@@ -22,7 +22,7 @@ class MakingArbitrageWorker
 
   def perform(ratio_value) # ratio_value > 1.0025 #Condition to be used in production
 
-    trios = Trio.all
+    trios = Trio.where(first_currency_id:35) #We use only trios starting with BTC to make BTC only :)
     depth = 10
 
     trios.shuffle.each do |trio|
