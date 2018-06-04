@@ -118,6 +118,8 @@ class MakingArbitrageWorker
       success_or_not = trade_histo_info["orderNumber"] == trade_info["orderNumber"]
     rescue
       Sidekiq.logger.info "Trade could not pass"
+      trade_info       = JSON.parse(trade)
+      Sidekiq.logger.info "Following trade failed:#{trade_info}"
     end
     return success_or_not
   end
