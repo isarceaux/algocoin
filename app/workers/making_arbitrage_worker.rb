@@ -101,7 +101,8 @@ class MakingArbitrageWorker
   end
 
   def trade(pair_string, rate, amount, buy_sell)
-    success_or_not = false
+    success = false
+    retries = 0
     begin
       trade = ""
       if buy_sell == "buy"
@@ -115,13 +116,23 @@ class MakingArbitrageWorker
       trade_histo_info = JSON.parse(Poloniex.trade_history(pair_string)).first
       Sidekiq.logger.info "Following trade attempted:#{trade_info}"
       Sidekiq.logger.info "Matching trade history:#{trade_histo_info}"
-      success_or_not = trade_histo_info["orderNumber"] == trade_info["orderNumber"]
+      success = trade_histo_info["orderNumber"] == trade_info["orderNumber"]
+      if !success && trade_info["resultingTrades"] == []
+        success = true
+      elsif trade_info["resultingTrades"] == []
+        Sidekiq.logger.info "Let's try again even if there is no error the trade didn't pass"
+        raise
+      end
     rescue
-      Sidekiq.logger.info "Trade could not pass"
-      trade_info       = JSON.parse(trade)
-      Sidekiq.logger.info "Following trade failed:#{trade_info}"
+      if retries < 5
+        retries += 1
+        Sidekiq.logger.info "Let's try again ! Attempt number #{retries}"
+        retry
+      else
+        Sidekiq.logger.info "Trade could not pass"
+      end
     end
-    return success_or_not
+    return success
   end
 
   def record_trades_of_arbitrage(arbitrage)
