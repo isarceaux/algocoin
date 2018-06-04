@@ -25,7 +25,7 @@ class MakingArbitrageWorker
     trios = Trio.where(first_currency_id:35) #We use only trios starting with BTC to make BTC only :)
     depth = 10
 
-    trios.shuffle.each do |trio|
+    trios.shuffle.each do |trio| 
       
       first_order_book = getting_order_books(trio.first_currency, trio.second_currency, depth)
       second_order_book = getting_order_books(trio.second_currency, trio.third_currency, depth)
