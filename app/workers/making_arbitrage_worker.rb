@@ -118,6 +118,7 @@ class MakingArbitrageWorker
       Sidekiq.logger.info "Matching trade history:#{trade_histo_info}"
       success = trade_histo_info["orderNumber"] == trade_info["orderNumber"]
       if !success && trade_info["resultingTrades"] == []
+        Sidekiq.logger.info "Did not manage to collect the trade info but it should have passed"
         success = true
       elsif trade_info["resultingTrades"] == []
         Sidekiq.logger.info "Let's try again even if there is no error the trade didn't pass"
