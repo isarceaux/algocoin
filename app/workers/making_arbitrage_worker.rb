@@ -128,6 +128,7 @@ class MakingArbitrageWorker
       if retries < 5
         retries += 1
         Sidekiq.logger.info "Let's try again ! Attempt number #{retries}"
+        sleep(1)
         retry
       else
         Sidekiq.logger.info "Trade could not pass"
