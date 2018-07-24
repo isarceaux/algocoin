@@ -5,8 +5,8 @@ class MakingArbitrageWorker
   attr_accessor :first_trade_successful, :second_trade_successful, :third_trade_successful
 
   URL_FIX_ZERO    = 'https://poloniex.com/public?command='
-  UNIT_TEST_USDT  = 2.0
-  UNIT_TEST_BTC   = 0.00017
+  UNIT_TEST_USDT  = 20.0
+  UNIT_TEST_BTC   = 0.0017
   TRANSACTION_FEE = 0.0025
   ROUNDING_LIMIT  = 10
 
